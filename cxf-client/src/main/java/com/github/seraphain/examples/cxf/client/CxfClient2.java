@@ -16,8 +16,8 @@ import com.github.seraphain.examples.cxf.CxfServerService;
  */
 public class CxfClient2 {
 
-    /** Log */
-    private static Logger log = LoggerFactory.getLogger(CxfClient2.class);
+    /** Logger */
+    private static Logger logger = LoggerFactory.getLogger(CxfClient2.class);
 
     /**
      * Main method.
@@ -30,8 +30,8 @@ public class CxfClient2 {
         CxfServerService cxfServerService = new CxfServerService(serverUrl);
         CxfServer cxfServer = cxfServerService.getCxfServerPort();
         String result = cxfServer.service("Client request.");
-        if (log.isInfoEnabled()) {
-            log.info("Result: " + result);
+        if (logger.isInfoEnabled()) {
+            logger.info("Result: " + result);
         }
     }
 

@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
  */
 public class CxfClient3 {
 
-    /** Log */
-    private static Logger log = LoggerFactory.getLogger(CxfClient3.class);
+    /** Logger */
+    private static Logger logger = LoggerFactory.getLogger(CxfClient3.class);
 
     /**
      * Main method.
@@ -82,7 +82,7 @@ public class CxfClient3 {
             // Save message
             requestSOAPMessage.saveChanges();
 
-            if (log.isInfoEnabled()) {
+            if (logger.isInfoEnabled()) {
                 // Log Web Service SOAP request�
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 StreamResult streamResult = new StreamResult();
@@ -91,7 +91,7 @@ public class CxfClient3 {
                 Transformer transformer = TransformerFactory.newInstance().newTransformer();
                 transformer.transform(source, streamResult);
                 String request = byteArrayOutputStream.toString("UTF-8");
-                log.info("SOAP request: " + request);
+                logger.info("SOAP request: " + request);
             }
 
             // Create SOAP connection and call service
@@ -102,7 +102,7 @@ public class CxfClient3 {
 
             // Handle the replay message�
             if (replySOAPMessage != null) {
-                if (log.isInfoEnabled()) {
+                if (logger.isInfoEnabled()) {
                     // Log Web Service SOAP replay�
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     StreamResult streamResult = new StreamResult();
@@ -111,7 +111,7 @@ public class CxfClient3 {
                     Transformer transformer = TransformerFactory.newInstance().newTransformer();
                     transformer.transform(source, streamResult);
                     String request = byteArrayOutputStream.toString("UTF-8");
-                    log.info("SOAP replay: " + request);
+                    logger.info("SOAP replay: " + request);
                 }
 
                 SOAPPart replySOAPPart = replySOAPMessage.getSOAPPart();
@@ -120,32 +120,32 @@ public class CxfClient3 {
                 if (replySOAPBody.getFault() == null) {
 
                 } else {
-                    log.info("SOAP request has been send with SOAPFault: " + replySOAPBody.getFault());
+                    logger.info("SOAP request has been send with SOAPFault: " + replySOAPBody.getFault());
                 }
             } else {
-                if (log.isInfoEnabled()) {
-                    log.info("SOAP request is sent with null reply.");
+                if (logger.isInfoEnabled()) {
+                    logger.info("SOAP request is sent with null reply.");
                 }
             }
         } catch (SOAPException e) {
-            if (log.isErrorEnabled()) {
-                log.error("SOAPException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("SOAPException occurs.", e);
             }
         } catch (TransformerConfigurationException e) {
-            if (log.isErrorEnabled()) {
-                log.error("TransformerConfigurationException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("TransformerConfigurationException occurs.", e);
             }
         } catch (TransformerFactoryConfigurationError e) {
-            if (log.isErrorEnabled()) {
-                log.error("TransformerFactoryConfigurationError occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("TransformerFactoryConfigurationError occurs.", e);
             }
         } catch (TransformerException e) {
-            if (log.isErrorEnabled()) {
-                log.error("TransformerException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("TransformerException occurs.", e);
             }
         } catch (UnsupportedEncodingException e) {
-            if (log.isErrorEnabled()) {
-                log.error("UnsupportedEncodingException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("UnsupportedEncodingException occurs.", e);
             }
         } finally {
             // Close SOAP connection
