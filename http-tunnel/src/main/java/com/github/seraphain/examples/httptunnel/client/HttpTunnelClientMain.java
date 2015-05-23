@@ -11,8 +11,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class HttpTunnelClientMain {
 
-    /** Log */
-    private static Logger log = LoggerFactory.getLogger(HttpTunnelClientMain.class);
+    /** Logger */
+    private static Logger logger = LoggerFactory.getLogger(HttpTunnelClientMain.class);
 
     /**
      * Main method.
@@ -23,8 +23,8 @@ public class HttpTunnelClientMain {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-client.xml");
         HttpTunnelClient httpTunnelClient = (HttpTunnelClient) context.getBean("httpTunnelClient");
         Object result = httpTunnelClient.send("Test Object");
-        if (log.isInfoEnabled()) {
-            log.info(result.toString());
+        if (logger.isInfoEnabled()) {
+            logger.info(result.toString());
         }
         context.close();
     }

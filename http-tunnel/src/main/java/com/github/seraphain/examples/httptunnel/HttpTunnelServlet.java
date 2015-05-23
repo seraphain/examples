@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +23,8 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("serial")
 public class HttpTunnelServlet extends HttpServlet {
 
-    /** Log */
-    private static final Logger log = LoggerFactory.getLogger(HttpTunnelServlet.class);
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(HttpTunnelServlet.class);
 
     /**
      * Process request.
@@ -45,8 +44,8 @@ public class HttpTunnelServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse rsp) {
         Object receivedObject = this.receive(req);
         if (receivedObject != null) {
-            if (log.isInfoEnabled()) {
-                log.info("Receive object: " + receivedObject);
+            if (logger.isInfoEnabled()) {
+                logger.info("Receive object: " + receivedObject);
             }
         }
         send(rsp, receivedObject);
@@ -59,25 +58,21 @@ public class HttpTunnelServlet extends HttpServlet {
      * @return object sent by client
      */
     private Object receive(HttpServletRequest req) {
-        ObjectInputStream in = null;
         Object receivedObject = null;
-        try {
-            in = new ObjectInputStream(req.getInputStream());
+        try (ObjectInputStream in = new ObjectInputStream(req.getInputStream())) {
             receivedObject = in.readObject();
         } catch (EOFException eof) {
-            if (log.isInfoEnabled()) {
-                log.info("Object receive complete.", eof);
+            if (logger.isInfoEnabled()) {
+                logger.info("Object receive complete.", eof);
             }
         } catch (IOException e) {
-            if (log.isErrorEnabled()) {
-                log.error("IOException occurs while receiving object.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while receiving object.", e);
             }
         } catch (ClassNotFoundException e) {
-            if (log.isErrorEnabled()) {
-                log.error("ClassNotFoundException occurs while receiving object.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("ClassNotFoundException occurs while receiving object.", e);
             }
-        } finally {
-            IOUtils.closeQuietly(in);
         }
         return receivedObject;
     }
@@ -90,29 +85,28 @@ public class HttpTunnelServlet extends HttpServlet {
      *            object sent to client
      */
     private void send(HttpServletResponse rsp, Object object) {
-        rsp.setContentType("application/octet-stream");
-
-        ByteArrayOutputStream byteOut = null;
-        ObjectOutputStream out = null;
-        ServletOutputStream servletOut = null;
-        try {
-            byteOut = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(byteOut);
+        byte[] buffer = null;
+        try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                ObjectOutputStream out = new ObjectOutputStream(byteOut)) {
             out.writeObject(object);
             out.flush();
-            byte[] buffer = byteOut.toByteArray();
-            rsp.setContentLength(buffer.length);
-            servletOut = rsp.getOutputStream();
-            servletOut.write(buffer);
+            buffer = byteOut.toByteArray();
         } catch (IOException e) {
-            if (log.isErrorEnabled()) {
-                log.error("IOException occurs while sending object.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while convert object to bytes.", e);
             }
-        } finally {
-            IOUtils.closeQuietly(servletOut);
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(byteOut);
+        }
+
+        if (buffer != null) {
+            rsp.setContentType("application/octet-stream");
+            rsp.setContentLength(buffer.length);
+            try (ServletOutputStream servletOut = rsp.getOutputStream()) {
+                servletOut.write(buffer);
+            } catch (IOException e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("IOException occurs while sending object.", e);
+                }
+            }
         }
     }
-
 }

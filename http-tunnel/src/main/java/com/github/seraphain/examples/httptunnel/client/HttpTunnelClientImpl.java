@@ -9,20 +9,19 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implement of HTTP tunnel client.
+ * Implementation of HTTP tunnel client.
  * 
  * @author
  * @see com.github.seraphain.examples.httptunnel.client.HttpTunnelClient
  */
 public class HttpTunnelClientImpl implements HttpTunnelClient {
 
-    /** Log */
-    private static final Logger log = LoggerFactory.getLogger(HttpTunnelClientImpl.class);
+    /** Logger */
+    private static final Logger logger = LoggerFactory.getLogger(HttpTunnelClientImpl.class);
 
     /**
      * HTTP tunnel server address
@@ -37,62 +36,72 @@ public class HttpTunnelClientImpl implements HttpTunnelClient {
      * @see com.github.seraphain.examples.httptunnel.client.HttpTunnelClient#send(java.lang.Object)
      */
     public Object send(Object request) {
-        if (log.isInfoEnabled()) {
-            log.info("Sending object: " + request);
+        if (logger.isInfoEnabled()) {
+            logger.info("Sending object: " + request);
         }
-        URL url = null;
-        ObjectInputStream objectInputStream = null;
-        ObjectOutputStream objectOutputStream = null;
-        DataOutputStream dataOutputStream = null;
-        ByteArrayOutputStream byteArrayOutputStream = null;
+
+        byte[] buffer = null;
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+            objectOutputStream.writeObject(request);
+            objectOutputStream.flush();
+            buffer = byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while convert object to bytes.", e);
+            }
+            return null;
+        }
+
+        URLConnection urlConnection = null;
         try {
-            url = new URL(httpTunnelServer);
-            URLConnection urlConnection = url.openConnection();
+            URL url = new URL(httpTunnelServer);
+
+            urlConnection = url.openConnection();
             urlConnection.setUseCaches(false);
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
 
-            byteArrayOutputStream = new ByteArrayOutputStream();
-            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(request);
-            objectOutputStream.flush();
-            byte[] buffer = byteArrayOutputStream.toByteArray();
-
             urlConnection.setRequestProperty("content-type", "application/octet-stream");
             urlConnection.setRequestProperty("content-length", Integer.toString(buffer.length));
+        } catch (IOException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while creating URL connection.", e);
+            }
+            return null;
+        }
 
-            dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+        try (DataOutputStream dataOutputStream = new DataOutputStream(urlConnection.getOutputStream())) {
             dataOutputStream.write(buffer);
             dataOutputStream.flush();
-
-            objectInputStream = new ObjectInputStream(urlConnection.getInputStream());
-            Object response = objectInputStream.readObject();
-
-            if (log.isInfoEnabled()) {
-                log.info("Receiving object: " + response);
+        } catch (IOException e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while sending object.", e);
             }
+            return null;
+        }
 
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(urlConnection.getInputStream())) {
+            Object response = objectInputStream.readObject();
+            if (logger.isInfoEnabled()) {
+                logger.info("Receiving object: " + response);
+            }
             return response;
         } catch (EOFException eof) {
-            if (log.isInfoEnabled()) {
-                log.info("Object receive complete.", eof);
+            if (logger.isInfoEnabled()) {
+                logger.info("Object receive complete.", eof);
             }
             return null;
         } catch (IOException e) {
-            if (log.isErrorEnabled()) {
-                log.error("IOException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("IOException occurs while receiving object.", e);
             }
             return null;
         } catch (ClassNotFoundException e) {
-            if (log.isErrorEnabled()) {
-                log.error("ClassNotFoundException occurs.", e);
+            if (logger.isErrorEnabled()) {
+                logger.error("ClassNotFoundException occurs.", e);
             }
             return null;
-        } finally {
-            IOUtils.closeQuietly(objectInputStream);
-            IOUtils.closeQuietly(dataOutputStream);
-            IOUtils.closeQuietly(objectOutputStream);
-            IOUtils.closeQuietly(byteArrayOutputStream);
         }
     }
 

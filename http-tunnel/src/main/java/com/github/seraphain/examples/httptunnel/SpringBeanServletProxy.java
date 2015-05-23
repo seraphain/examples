@@ -19,10 +19,10 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @SuppressWarnings("serial")
 public class SpringBeanServletProxy extends HttpServlet {
 
-    /** Bean name of the principal Servlet in Spring container */
+    /** Bean name of the target Servlet in Spring container */
     private String targetBeanName;
 
-    /** Principal Servlet */
+    /** Target Servlet */
     private Servlet targetBean;
 
     /**
