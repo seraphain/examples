@@ -43,7 +43,6 @@
         <version>3.4</version>
       </dependency>
 
-
       <!-- Log -->
       <dependency>
         <groupId>org.slf4j</groupId>
