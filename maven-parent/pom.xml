@@ -17,6 +17,7 @@
 
   <properties>
     <depedency.version>${project.version}</depedency.version>
+    <java.compile.version>1.8</java.compile.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -27,6 +28,15 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <inherited>true</inherited>
+          <configuration>
+            <source>${java.compile.version}</source>
+            <target>${java.compile.version}</target>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
