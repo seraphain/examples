@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+
+  <display-name>HTTP_Tunnel</display-name>
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:/applicationContext.xml</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- HttpTunnelServlet BEGIN -->
+  <servlet>
+    <servlet-name>httpTunnelServlet</servlet-name>
+    <servlet-class>com.github.seraphain.examples.httptunnel.SpringBeanServletProxy</servlet-class>
+    <init-param>
+      <param-name>targetBean</param-name>
+      <param-value>httpTunnelServlet</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>httpTunnelServlet</servlet-name>
+    <url-pattern>/servlet/httpTunnelServlet</url-pattern>
+  </servlet-mapping>
+  <!-- HttpTunnelServlet END -->
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+
+</web-app>
