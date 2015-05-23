@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0">
+
+  <display-name>SpringWebServiceExample</display-name>
+
+  <!-- Spring web service -->
+  <servlet>
+    <servlet-name>exampleService</servlet-name>
+    <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>transformWsdlLocations</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>exampleService</servlet-name>
+    <url-pattern>/exampleService</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>exampleService</servlet-name>
+    <url-pattern>/wsdl/exampleService.wsdl</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>exampleService</servlet-name>
+    <url-pattern>/wsdl/exampleServiceSchema.xsd</url-pattern>
+  </servlet-mapping>
+
+</web-app>

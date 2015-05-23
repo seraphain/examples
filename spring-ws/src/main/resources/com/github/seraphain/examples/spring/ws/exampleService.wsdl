@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tns="http://seraphain.github.com/service" targetNamespace="http://seraphain.github.com/service">
+  <wsdl:types>
+    <xs:schema>
+      <xs:import namespace="http://seraphain.github.com/service"
+        schemaLocation="exampleServiceSchema.xsd" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="testReq">
+    <wsdl:part name="testReq" element="tns:testReq">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="testRsp">
+    <wsdl:part name="testRsp" element="tns:testRsp">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="wsException">
+    <wsdl:part name="wsException" element="tns:wsException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="exampleServiceApi">
+    <wsdl:operation name="test">
+      <wsdl:input name="testReq" message="tns:testReq">
+      </wsdl:input>
+      <wsdl:output name="testRsp" message="tns:testRsp">
+      </wsdl:output>
+      <wsdl:fault name="wsException" message="tns:wsException" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="exampleServiceApiSoap11" type="tns:exampleServiceApi">
+    <soap:binding style="document"
+      transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="test">
+      <soap:operation soapAction="" />
+      <wsdl:input name="testReq">
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="testRsp">
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="wsException">
+        <soap:fault name="wsException" use="literal" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="exampleServiceApiService">
+    <wsdl:port name="exampleServiceApiSoap11" binding="tns:exampleServiceApiSoap11">
+      <soap:address location="http://localhost:8080/spring-ws/exampleService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
