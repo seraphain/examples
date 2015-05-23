@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jaxws="http://cxf.apache.org/jaxws"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                      http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+  <!-- Import Apache CXF Bean Definition for Apache CXF old version -->
+  <!-- 
+  <import resource="classpath:META-INF/cxf/cxf.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+   -->
+
+  <!-- CXF Logging Feature -->
+  <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
+
+  <context:property-placeholder location="classpath:client.properties" />
+
+  <!-- WebService Client -->
+  <jaxws:client id="cxfServer"
+    serviceClass="com.github.seraphain.examples.cxf.CxfServer" address="${webServiceServer}">
+    <jaxws:features>
+      <ref local="loggingFeature" />
+    </jaxws:features>
+  </jaxws:client>
+
+</beans>
